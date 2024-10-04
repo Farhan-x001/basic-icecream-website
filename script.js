@@ -1,3 +1,4 @@
+let quantities = [];
 document.addEventListener('DOMContentLoaded', () => {
     let navbar = document.querySelector('.navbar');
     let searchForm = document.querySelector('.search-form');
@@ -100,23 +101,40 @@ function clearWishlist() {
 }
 
 function addToCart(productName, price) {
-    cart.push({ name: productName, price: price });
-    alert(`Product ${productName} added to cart`);//Added alert message to notify that item has been added
+    // Get the quantity from the input element
+    const quantityElement = document.getElementById(`quantity-${productName.toLowerCase().replace(' ', '-')}`);
+    const quantity = quantityElement ? parseInt(quantityElement.textContent) : 1;
+
+    // Check if the item already exists in the cart
+    const existingItem = cart.find(item => item.name === productName);
+
+    if (existingItem) {
+        // If the item is already in the cart, update the quantity
+        existingItem.quantity += quantity;
+    } else {
+        // If the item is not in the cart, add it with the specified quantity
+        cart.push({
+            name: productName,
+            price: price,
+            quantity: quantity
+        });
+        // Initialize quantity tracking
+        quantities[productName] = quantity; // Track the quantity of the product
+    }
+
+    // Notify the user that the item has been added to the cart
+    alert(`Product ${productName} added to cart`);
+
+    // Update the cart display
     displayCart();
-    //remove item from wishlist
+
+    // Remove item from wishlist if it exists
     const wishlistIndex = wishlist.findIndex(item => item.name === productName);
     if (wishlistIndex !== -1) {
         removeFromWishlist(wishlistIndex);
     }
 }
 
-// Function to remove items from cart
-function removeFromCart(index) {
-    cart.splice(index, 1);
-    displayCart();
-}
-
-// Function to display cart items and calculate total
 function displayCart() {
     const cartItemsElement = document.getElementById('cartItems');
     const totalElement = document.getElementById('total');
@@ -124,15 +142,26 @@ function displayCart() {
     let total = 0;
 
     cart.forEach((item, index) => {
-        cartItemsHTML += `<li>${item.name} - $${item.price.toFixed(2)} <button onclick="removeFromCart(${index})">Remove</button></li>`;
-        total += item.price;
+        const itemTotalPrice = item.price * item.quantity;
+        cartItemsHTML += `<li>${item.name} - ${item.quantity} x $${item.price.toFixed(2)} = $${itemTotalPrice.toFixed(2)} <button onclick="removeFromCart(${index})">Remove</button></li>`;
+        total += itemTotalPrice;
     });
 
     cartItemsElement.innerHTML = cartItemsHTML;
     totalElement.textContent = `Total: $${total.toFixed(2)}`;
-    displayOrder();
+
+    // Debugging output
+    console.log('Current Cart:', cart);
+    console.log('Current Quantities:', quantities);
 }
 
+// Function to remove items from cart
+function removeFromCart(index) {
+    const itemName = cart[index].name; // Get the item name to update quantities
+    cart.splice(index, 1); // Remove the item from the cart
+    delete quantities[itemName]; // Remove the quantity tracking
+    displayCart();
+}
 // Function to simulate checkout
 // function checkout() {
 //     if (cart.length === 0) {
@@ -315,3 +344,10 @@ document.addEventListener('DOMContentLoaded', function() {
     checkScroll(); 
 });
 
+function changeQuantity(itemId, change) {
+    const quantityElement = document.getElementById(`quantity-${itemId}`);
+    let currentQuantity = parseInt(quantityElement.textContent);
+    
+    currentQuantity = Math.max(1, currentQuantity + change); // Prevent quantity from going below 1
+    quantityElement.textContent = currentQuantity;
+}

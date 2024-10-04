@@ -106,13 +106,11 @@
         </div>
         <div class="cart-items-container">
             <div class="cart">
+                <h2>Your Cart</h2>
                 <ul id="cartItems">
-                    <!-- Cart items will be displayed here -->
+                    <!-- Cart items will be dynamically displayed here -->
                 </ul>
-                <h3>
-                    <div id="total">Total:$0.00
-                    </div>
-                </h3>
+                <h3 id="total">Total: $0.00</h3>
                 <button id="checkout-button" onclick="checkout()">Checkout</button>
             </div>
         </div>
@@ -179,10 +177,14 @@
 
             <div class="box">
                 <img src="https://images.unsplash.com/photo-1488900128323-21503983a07e" alt="">
-                <h3>Berry Pops</h3>
-                <div class="price"> $15.99 <span>20.99</span></div>
-                <button  id="inbox" onclick="addToCart('Berry Pops', 20.00)">Add to Cart</button><br>
-                <button  id="inbox" onclick="addToWishlist('Berry Pops', 20.00)">Add to wishlist</button>
+    <h3>Berry Pops</h3>
+    <div class="price"> $15.99 <span>20.99</span></div>
+    <label>Quantity:</label>
+    <button onclick="changeQuantity('berry-pops', -1)">-</button>
+    <span id="quantity-berry-pops">1</span>
+    <button onclick="changeQuantity('berry-pops', 1)">+</button>
+    <button onclick="addToCart('Berry Pops', 15.99)">Add to Cart</button><br>
+    <button onclick="addToWishlist('Berry Pops')">Add to wishlist</button>
             </div>
 
             <div class="box">
@@ -489,11 +491,14 @@
     <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize animations on page load
+            initAnimations();
     
-          
+            // Add hover effects to buttons
+            addButtonHoverEffects();
+        });
     
-       
-    
+        function initAnimations() {
             // Animate the search form
             gsap.from(".search-form", { opacity: 0, x: -100, duration: 1, ease: "power2.out" });
     
@@ -504,11 +509,12 @@
             gsap.from(".my-order-container", { opacity: 0, x: 100, duration: 1.5, ease: "power2.out" });
     
             // Animate home section content
-            gsap.from(".home .content h3", { opacity: 0, x: -100, duration: 1.5, delay :0.1, ease: "power2.out" });
-            gsap.from(".home .content p", { opacity: 0, x: -100, duration: 1.5, delay: 0.1, ease: "power2.out" });
-            gsap.from(".home .animated-button", { opacity: 0, x: -100, duration: 1.5, delay: 0.1, ease: "power2.out" });
+            gsap.from(".home .content h3", { opacity: 0, x: -100, duration: 1.5, delay: 0.1, ease: "power2.out" });
+            gsap.from(".home .content p", { opacity: 0, x: -100, duration: 1.5, delay: 0.2, ease: "power2.out" });
+            gsap.from(".home .animated-button", { opacity: 0, x: -100, duration: 1.5, delay: 0.3, ease: "power2.out" });
+        }
     
-            // Animate buttons on hover for scaling effect
+        function addButtonHoverEffects() {
             const buttons = document.querySelectorAll("button");
             buttons.forEach(button => {
                 button.addEventListener('mouseover', () => {
@@ -518,10 +524,9 @@
                     gsap.to(button, { scale: 1, duration: 0.2 });
                 });
             });
-    
-        });
-        
+        }
     </script>
+    
     
     
     <script src="./darkMode.js"></script>
